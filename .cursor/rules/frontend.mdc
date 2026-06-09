@@ -65,8 +65,24 @@ Order within a file: imports → types → component → local helpers.
 
 ## Routing
 
-- File-based route structure inside `apps/web/src/app/`.
-- Use React Router. Lazy-load route components.
+Semantic `pages/` directory — file name maps to route path:
+
+```
+src/
+  pages/             ← one default-export component per route
+    index.tsx        ← /
+    about.tsx        ← /about
+    settings.tsx     ← /settings
+    not-found.tsx    ← catch-all 404
+  layouts/           ← shared shells (nav, sidebar, footer)
+    root-layout.tsx  ← wraps all pages via <Outlet />
+  router.tsx         ← single route config, lazy imports all pages
+```
+
+- Each page file has a single `default export` (the page component).
+- All pages are `lazy()` imported in `router.tsx` and wrapped in `<Suspense>`.
+- Layouts use React Router's `<Outlet />` for nested rendering.
+- To add a page: create `pages/<name>.tsx`, add a `<Route>` in `router.tsx`.
 
 ## Data Fetching
 

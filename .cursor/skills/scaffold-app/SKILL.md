@@ -67,11 +67,13 @@ Directory layout:
 
 ```
 src/
-  app/            ← routes / layouts
+  pages/          ← one file per route (index.tsx, about.tsx, not-found.tsx)
+  layouts/        ← shared shells (root-layout.tsx uses <Outlet />)
+  router.tsx      ← single route config, lazy imports all pages
   components/     ← app-specific components
   features/       ← domain features (colocated)
   hooks/          ← shared hooks
-  lib/            ← framework wrappers
+  lib/            ← framework wrappers, api-client, utils
   services/       ← oRPC client + query hooks
   stores/         ← client state (zustand / context)
 ```

@@ -1,6 +1,7 @@
+import { Suspense } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter, Route, Routes } from 'react-router'
-import { HelloPage } from '@/app/hello-page'
+import { BrowserRouter } from 'react-router'
+import { AppRouter } from '@/router'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,9 +16,9 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HelloPage />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <AppRouter />
+        </Suspense>
       </BrowserRouter>
     </QueryClientProvider>
   )

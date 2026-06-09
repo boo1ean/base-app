@@ -75,7 +75,8 @@ export const notificationRouter = router({
 
 ## 4. Route Wiring
 
-Add the route in `apps/web/src/app/`. Lazy-load the feature's main component.
+1. Create `apps/web/src/pages/<name>.tsx` (default export, the page component).
+2. Add a lazy import + `<Route>` in `apps/web/src/router.tsx`.
 
 ## 5. Test
 
