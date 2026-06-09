@@ -1,0 +1,83 @@
+---
+description: Backend patterns — tsx, oRPC, Drizzle ORM, Zod
+globs: "apps/api/**/*.ts"
+alwaysApply: false
+---
+
+# Backend
+
+## Project Structure
+
+```
+apps/api/src/
+  server.ts           ← entry point, server bootstrap
+  router/             ← oRPC router definitions
+    index.ts          ← root router (merges sub-routers)
+    <domain>.ts       ← domain routers (users.ts, orders.ts)
+  procedures/         ← procedure implementations
+  db/
+    schema.ts         ← Drizzle table definitions
+    migrations/       ← generated migrations
+    index.ts          ← db client instance
+  middleware/          ← oRPC middleware (auth, logging, error handling)
+  services/           ← business logic (pure functions, no framework deps)
+  utils/              ← backend-specific utilities
+```
+
+## oRPC
+
+- Group related procedures into sub-routers by domain.
+- Validate all inputs and outputs with Zod schemas from `@repo/shared`.
+- Keep procedures thin — delegate logic to services.
+- Use middleware for cross-cutting concerns (auth, logging, rate limiting).
+
+```typescript
+export const userRouter = router({
+  getById: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .output(userSchema)
+    .query(async ({ input, ctx }) => {
+      return userService.getById(ctx.db, input.id)
+    }),
+})
+```
+
+## Drizzle ORM
+
+- Define schema in `db/schema.ts` using Drizzle's table builders.
+- Use `drizzle-kit` for migrations. Never hand-edit migration files.
+- Prefer Drizzle's query builder over raw SQL.
+- Keep queries in service functions, not in procedures directly.
+
+```typescript
+export const users = pgTable('users', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  name: varchar('name', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+```
+
+## Zod Schemas
+
+- Shared schemas in `@repo/shared` — reused by frontend and backend.
+- Backend-only schemas (internal validation, DB row shapes) stay in `apps/api/`.
+- Always use `.parse()` or `.safeParse()` at boundaries, never trust raw input.
+
+## Services
+
+- Pure business logic. No framework imports, no direct DB access — receive `db` as a parameter.
+- One service file per domain (`user-service.ts`, `order-service.ts`).
+- Return typed results, throw typed errors.
+
+## Error Handling
+
+- Map errors to proper HTTP status codes in middleware.
+- Domain errors extend a base `AppError` class with `code`, `message`, `cause`.
+- Log errors with structured context (request ID, user ID, operation).
+- Never expose internals (stack traces, DB errors) in API responses.
+
+## Environment
+
+- Validate env vars at startup with Zod.
+- Access config through a typed `env` object, never raw `process.env`.

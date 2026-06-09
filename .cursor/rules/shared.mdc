@@ -1,0 +1,26 @@
+---
+description: Shared packages — types, Zod schemas, utilities
+globs: "packages/shared/**/*.ts"
+alwaysApply: false
+---
+
+# Shared Package
+
+Cross-workspace types, Zod schemas, and utilities shared between frontend and backend.
+
+## Structure
+
+```
+packages/shared/src/
+  schemas/            ← Zod schemas (user.ts, order.ts, etc.)
+  types/              ← Derived TypeScript types (inferred from schemas)
+  utils/              ← Pure utility functions (formatters, validators, constants)
+  index.ts            ← barrel export
+```
+
+## Rules
+
+- Every schema is the single source of truth. Types are derived via `z.infer<>`.
+- Zero framework dependencies — no React, no Node-specific APIs.
+- Everything must run in both browser and Node environments.
+- Export through barrel `index.ts`. External consumers import from `@repo/shared`.

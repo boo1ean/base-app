@@ -1,0 +1,83 @@
+---
+description: React + Vite + Tailwind + shadcn/ui component patterns
+globs: "apps/web/**/*.{ts,tsx}, packages/ui/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Frontend
+
+## Component Structure
+
+```tsx
+import { useState } from 'react'
+import { Button } from '@repo/ui/button'
+
+interface UserCardProps {
+  user: User
+  onEdit: (id: string) => void
+}
+
+export function UserCard({ user, onEdit }: UserCardProps) {
+  const [expanded, setExpanded] = useState(false)
+  return ( /* ... */ )
+}
+```
+
+Order within a file: imports → types → component → local helpers.
+
+## Props
+
+- Destructure in the function signature.
+- Name the type `<Component>Props`.
+- Accept `className` on wrapper components, merge with `cn()`.
+- Never use `React.FC`.
+- Avoid prop drilling past 2 levels — use context or composition.
+
+## Hooks
+
+- One concern per hook.
+- Shared hooks in `hooks/`, feature hooks in `features/<name>/hooks/`.
+- Never call hooks conditionally.
+- No `useEffect` for derived state — compute during render.
+
+## shadcn/ui
+
+- Use shadcn components as the primitive layer. Don't reinvent inputs, dialogs, buttons.
+- Customize via Tailwind — not by forking component internals.
+- Wrap shadcn primitives in domain components when adding business logic.
+
+## Styling (Tailwind)
+
+- Utility classes are the primary styling method.
+- Use `cn()` helper (clsx + tailwind-merge) for conditional classes.
+- Design tokens in `tailwind.config.ts`, not raw values in components.
+- Semantic color names: `primary`, `destructive`, `muted`.
+- Mobile-first: base styles → `sm:` → `md:` → `lg:`.
+- Dark mode via `class` strategy: `bg-white dark:bg-gray-900`.
+- Respect `prefers-reduced-motion` — use `motion-safe:`.
+
+## Patterns to Avoid
+
+- No inline styles except dynamic runtime values.
+- No string concatenation for classes — use `cn()`.
+- No business logic inside components — extract to hooks or services.
+- No `React.memo` / `useMemo` / `useCallback` without a measured perf problem.
+
+## Routing
+
+- File-based route structure inside `apps/web/src/app/`.
+- Use React Router. Lazy-load route components.
+
+## Data Fetching
+
+- TanStack Query for server state.
+- Query key factories:
+
+```typescript
+export const userKeys = {
+  all: ['users'] as const,
+  detail: (id: string) => [...userKeys.all, id] as const,
+}
+```
+
+- oRPC client calls go through typed hooks wrapping `useQuery` / `useMutation`.

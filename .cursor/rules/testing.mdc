@@ -1,0 +1,50 @@
+---
+description: Testing conventions — Vitest, React Testing Library, structure
+globs: "**/*.test.{ts,tsx}, **/*.spec.{ts,tsx}, tests/**"
+alwaysApply: false
+---
+
+# Testing
+
+## Stack
+
+- Unit / Integration: Vitest + React Testing Library
+- E2E: Playwright (in `tests/`)
+
+## Structure
+
+Arrange-Act-Assert:
+
+```typescript
+describe('UserCard', () => {
+  it('renders user name and email', () => {
+    const user = createMockUser({ name: 'Alice' })
+    render(<UserCard user={user} onEdit={vi.fn()} />)
+    expect(screen.getByText('Alice')).toBeInTheDocument()
+  })
+})
+```
+
+## What to Test
+
+- Components: rendering, interactions, conditional display, error/loading states
+- Hooks: state changes, side effects, return values
+- Utils: pure functions with edge cases
+- Services: request formation, response parsing, error mapping (mock HTTP layer)
+
+## What NOT to Test
+
+- Implementation details (internal state, private methods)
+- Third-party library behavior
+- Styles or class names
+
+## Mocking
+
+- Prefer dependency injection over module mocking.
+- Use `msw` for API mocking — never mock fetch directly.
+- Factory functions for test data: `createMockUser()`, `createMockOrder()`.
+
+## Coverage
+
+- Meaningful coverage, not 100%. Focus on business logic and user-facing behavior.
+- New features must include tests. Bug fixes must include a regression test.

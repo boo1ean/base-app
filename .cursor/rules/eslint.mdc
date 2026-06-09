@@ -1,0 +1,73 @@
+---
+description: ESLint with @antfu/eslint-config — setup and rules
+globs: "eslint.config.*, **/eslint.config.*"
+alwaysApply: false
+---
+
+# ESLint
+
+`@antfu/eslint-config` handles both linting and formatting. No Prettier.
+
+## Root Config (`eslint.config.ts`)
+
+```typescript
+import antfu from '@antfu/eslint-config'
+
+export default antfu({
+  react: true,
+  typescript: true,
+  formatters: true,
+  stylistic: {
+    indent: 2,
+    quotes: 'single',
+    semi: false,
+  },
+  ignores: [
+    'dist',
+    'node_modules',
+    '.turbo',
+    'drizzle',
+  ],
+})
+```
+
+## Enforced Style
+
+- No semicolons
+- Single quotes
+- 2-space indent
+- Sorted imports (auto-grouped)
+- Trailing commas in multiline
+- No unused variables (error)
+
+## Scripts
+
+```json
+{
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  }
+}
+```
+
+## Overrides
+
+Use the chaining API for per-package overrides:
+
+```typescript
+export default antfu({
+  react: true,
+  typescript: true,
+}).override('antfu/typescript/rules', {
+  rules: {
+    'ts/no-explicit-any': 'error',
+  },
+})
+```
+
+## Don'ts
+
+- Don't add Prettier — antfu replaces it.
+- Don't create `.eslintrc.*` — flat config only.
+- Don't `// eslint-disable` whole files — fix the code or add a scoped override.

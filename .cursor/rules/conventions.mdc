@@ -1,0 +1,70 @@
+---
+description: Universal coding standards — naming, imports, TypeScript, error handling, code style
+alwaysApply: true
+---
+
+# Conventions
+
+## Naming
+
+- Files & folders: `kebab-case` (`user-profile.tsx`, `use-auth.ts`)
+- Components: `PascalCase` (`UserProfile`)
+- Hooks: `camelCase` with `use` prefix (`useAuth`)
+- Types/Interfaces: `PascalCase`, no `I` prefix (`User`, not `IUser`)
+- Constants: `UPPER_SNAKE_CASE` for true constants
+- Enums: prefer `as const` objects over `enum`
+
+## Imports
+
+Order, separated by blank lines:
+
+1. External packages (`react`, `zod`)
+2. Workspace packages (`@repo/shared`, `@repo/ui`)
+3. Internal aliases (`@/lib/...`, `@/components/...`)
+4. Relative (`./`, `../`)
+
+Use path aliases (`@/`). Never deep relative imports like `../../../`.
+
+## TypeScript
+
+- `strict: true` always. No exceptions.
+- Never use `any`. Use `unknown` + type guards.
+- Annotate return types on exported functions.
+- Use `satisfies` to validate literals without widening.
+- Use parameter objects when a function takes 3+ arguments.
+- Derive types from Zod schemas (`z.infer<typeof schema>`), not the other way around.
+
+## Error Handling
+
+- Never swallow errors silently.
+- Typed error classes extending `Error` with `cause`.
+- Validate at system boundaries (API input, env vars, external data).
+
+## Files
+
+- One component/module per file.
+- Keep files under 200 lines. Extract when growing.
+- Colocate tests: `button.tsx` → `button.test.tsx`.
+
+## Code Style
+
+Enforced by `@antfu/eslint-config`. No Prettier.
+
+- No semicolons
+- Single quotes
+- 2-space indent
+- No unused variables
+- Imports auto-sorted by ESLint
+
+Run `pnpm lint:fix` before committing.
+
+## Dependencies
+
+- Pin exact versions (no `^` or `~`).
+- Before adding a dep, check if it exists in the repo or can be written in < 30 lines.
+- Adding an infra dependency (DB, cache, queue, object storage) or a new app means adding a matching service to `docker-compose.yml` — see the `docker` rule.
+
+## Comments
+
+- Don't narrate what code does.
+- Do comment: non-obvious business logic, workarounds with linked issues, public API contracts.
