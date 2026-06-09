@@ -1,26 +1,87 @@
 ---
-description: Shared packages — types, Zod schemas, utilities
-globs: "packages/shared/**/*.ts"
+description: Shared packages — DB schema, logger, Zod schemas, types, utilities
+globs: "packages/shared/**/*.ts, packages/db/**/*.ts, packages/logger/**/*.ts"
 alwaysApply: false
 ---
 
-# Shared Package
+# Shared Packages
 
-Cross-workspace types, Zod schemas, and utilities shared between frontend and backend.
+**Packages must never use `process.env`.** All config comes through options objects passed by the app at initialization.
 
-## Structure
+## packages/db
+
+Drizzle schema and database factory.
+
+```
+packages/db/src/
+  schema/             ← Drizzle table definitions (users.ts, orders.ts, etc.)
+    index.ts          ← barrel re-export of all tables
+  index.ts            ← createDb(options) factory + type exports
+```
+
+### Rules
+
+- `createDb({ connectionString })` — receives config via options, returns a typed Drizzle instance.
+- `migrateDb(db)` — runs pending migrations. Called by the app at startup, before listening.
+- No `process.env` — the connection string comes from the app's `env.ts`.
+- Schema files define tables only. No queries, no business logic.
+- Add new tables as `packages/db/src/schema/<domain>.ts`, re-export from `schema/index.ts`.
+- Generate migrations with `pnpm --filter @repo/db db:generate`. Never hand-edit migration files.
+- `drizzle.config.ts` has localhost defaults hardcoded for local dev (no env vars needed).
+
+### Usage in apps
+
+```typescript
+// apps/api/src/services/db.ts
+import { createDb } from '@repo/db'
+import { env } from '../env.js'
+
+export const db = createDb({ connectionString: env.DATABASE_URL })
+```
+
+## packages/logger
+
+Pino-based structured logger.
+
+```
+packages/logger/src/
+  index.ts            ← createAppLogger(options) factory + AppLogger type
+```
+
+### Rules
+
+- `createAppLogger({ app, level?, format? })` — all config via options, returns a typed pino logger.
+- No `process.env` — level and format come from the app's `env.ts`.
+- Use structured logging: `logger.info('message', { key: value })`, not string interpolation.
+- Never use `console.log` / `console.error` — use the logger.
+
+### Usage in apps
+
+```typescript
+// apps/api/src/services/logger.ts
+import { createAppLogger } from '@repo/logger'
+import { env } from '../env.js'
+
+export const logger = createAppLogger({
+  app: 'api',
+  level: env.LOG_LEVEL,
+  format: env.LOG_FORMAT,
+})
+```
+
+## packages/shared
+
+Cross-workspace Zod schemas, types, and utilities.
 
 ```
 packages/shared/src/
   schemas/            ← Zod schemas (user.ts, order.ts, etc.)
-  types/              ← Derived TypeScript types (inferred from schemas)
-  utils/              ← Pure utility functions (formatters, validators, constants)
   index.ts            ← barrel export
 ```
 
-## Rules
+### Rules
 
 - Every schema is the single source of truth. Types are derived via `z.infer<>`.
-- Zero framework dependencies — no React, no Node-specific APIs.
+- Zero framework dependencies — no React, no Node-specific APIs, no `process.env`.
 - Everything must run in both browser and Node environments.
-- Export through barrel `index.ts`. External consumers import from `@repo/shared`.
+- Export through barrel `index.ts`. Import as `@repo/shared`.

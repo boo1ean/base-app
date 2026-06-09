@@ -13,12 +13,13 @@ Bootstrap the monorepo. Run steps in order from the repo root.
 - [ ] 1. Root workspace
 - [ ] 2. Frontend (apps/web)
 - [ ] 3. Backend (apps/api)
-- [ ] 4. Shared package
-- [ ] 5. UI package
-- [ ] 6. Path aliases
-- [ ] 7. ESLint
-- [ ] 8. Docker (one-shot launch)
-- [ ] 9. Git
+- [ ] 4. DB package (packages/db)
+- [ ] 5. Shared package (packages/shared)
+- [ ] 6. UI package (packages/ui)
+- [ ] 7. Path aliases
+- [ ] 8. ESLint
+- [ ] 9. Docker (one-shot launch)
+- [ ] 10. Git
 ```
 
 ## 1. Root
@@ -81,21 +82,39 @@ src/
 ## 3. Backend — apps/api
 
 ```bash
-mkdir -p apps/api/src/{router,procedures,db/migrations,middleware,services,utils}
+mkdir -p apps/api/src/{router,procedures,middleware,services,utils}
 cd apps/api && pnpm init
-pnpm add @orpc/server drizzle-orm zod postgres
-pnpm add -D drizzle-kit tsx @types/node vitest
+pnpm add @orpc/server @repo/db @repo/shared zod
+pnpm add -D tsx @types/node vitest
 ```
 
-## 4. Shared — packages/shared
+Create `apps/api/src/services/db.ts` — instantiates the shared db package:
+
+```typescript
+import { createDb } from '@repo/db'
+export const db = createDb({ connectionString: process.env.DATABASE_URL! })
+```
+
+## 4. DB Package — packages/db
 
 ```bash
-mkdir -p packages/shared/src/{schemas,types,utils}
+mkdir -p packages/db/src/schema
+cd packages/db && pnpm init
+pnpm add drizzle-orm postgres
+pnpm add -D drizzle-kit @types/node
+```
+
+Schema lives here. Apps import `createDb` and pass a connection string. See the `shared` rule.
+
+## 5. Shared — packages/shared
+
+```bash
+mkdir -p packages/shared/src/schemas
 cd packages/shared && pnpm init
 pnpm add zod
 ```
 
-## 5. UI — packages/ui
+## 6. UI — packages/ui
 
 ```bash
 mkdir -p packages/ui/src/{components,lib}
@@ -103,7 +122,7 @@ cd packages/ui && pnpm init
 pnpm add react tailwindcss clsx tailwind-merge
 ```
 
-## 6. Path Aliases
+## 7. Path Aliases
 
 In each app's `tsconfig.json`:
 
@@ -111,7 +130,7 @@ In each app's `tsconfig.json`:
 { "compilerOptions": { "baseUrl": ".", "paths": { "@/*": ["./src/*"] } } }
 ```
 
-## 7. ESLint
+## 8. ESLint
 
 Create `eslint.config.ts` at the repo root (see the `eslint` rule for the config). Add root scripts:
 
@@ -119,7 +138,7 @@ Create `eslint.config.ts` at the repo root (see the `eslint` rule for the config
 { "scripts": { "lint": "eslint .", "lint:fix": "eslint . --fix" } }
 ```
 
-## 8. Docker
+## 9. Docker
 
 The repo ships a `docker-compose.yml` for one-shot launch. Compose has built-in env defaults (`${VAR:-default}`), so no `.env` is required. Add a `Dockerfile` for each app so compose can build them:
 
@@ -140,7 +159,7 @@ cp .cursor/skills/scaffold-app/templates/env.example .env
 
 Keep `docker-compose.yml` in sync with every app and infra dependency — see the `docker` rule.
 
-## 9. Git
+## 10. Git
 
 ```bash
 git init

@@ -19,7 +19,9 @@ apps/
   web/            ← React frontend (Vite)
   api/            ← Backend server (tsx + oRPC)
 packages/
-  shared/         ← Shared types, schemas, utils
+  db/             ← Drizzle schema, createDb factory, migrations
+  logger/         ← Pino-based logger, createAppLogger factory
+  shared/         ← Shared Zod schemas, types, utils
   ui/             ← Shared UI components (shadcn base)
 docker-compose.yml ← one-shot launch: all apps + infra
 ```
@@ -36,7 +38,7 @@ Passive coding standards in `.cursor/rules/*.mdc`, auto-injected by glob:
 | `git`              | Always                                |
 | `frontend`         | `apps/web/**`, `packages/ui/**`       |
 | `backend`          | `apps/api/**`                         |
-| `shared`           | `packages/shared/**`                  |
+| `shared`           | `packages/shared/**`, `packages/db/**`, `packages/logger/**` |
 | `testing`          | `*.test.*`, `*.spec.*`, `tests/**`    |
 | `eslint`           | `eslint.config.*`                     |
 | `docker`           | `docker-compose*.yml`, `**/Dockerfile`, `**/package.json` |

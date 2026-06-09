@@ -34,6 +34,13 @@ Use path aliases (`@/`). Never deep relative imports like `../../../`.
 - Use parameter objects when a function takes 3+ arguments.
 - Derive types from Zod schemas (`z.infer<typeof schema>`), not the other way around.
 
+## Environment & Configuration
+
+- **`process.env` is banned in `packages/`**. Packages must never read environment variables.
+- Packages expose a factory function that receives config via an options object (e.g. `createDb({ connectionString })`, `createAppLogger({ app, level })`).
+- Only apps (`apps/`) may read `process.env`, and only in a single `env.ts` file — see the `backend` rule.
+- This keeps packages pure, testable, and reusable across apps with different env setups.
+
 ## Error Handling
 
 - Never swallow errors silently.

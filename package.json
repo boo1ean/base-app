@@ -11,7 +11,12 @@
     "build": "turbo run build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "db:generate": "pnpm --filter @repo/db db:generate",
+    "db:migrate": "pnpm --filter @repo/db db:migrate",
+    "db:drop": "pnpm --filter @repo/db db:drop",
+    "db:fresh": "pnpm --filter @repo/db db:fresh",
+    "db:studio": "pnpm --filter @repo/db db:studio"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.12.0",

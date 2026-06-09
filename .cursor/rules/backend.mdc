@@ -10,18 +10,48 @@ alwaysApply: false
 
 ```
 apps/api/src/
-  server.ts           ← entry point, server bootstrap
+  env.ts              ← THE ONLY file that reads process.env. Zod-validated, typed.
+  server.ts           ← entry point, imports env + wires services
   router/             ← oRPC router definitions
     index.ts          ← root router (merges sub-routers)
     <domain>.ts       ← domain routers (users.ts, orders.ts)
   procedures/         ← procedure implementations
-  db/
-    schema.ts         ← Drizzle table definitions
-    migrations/       ← generated migrations
-    index.ts          ← db client instance
+  services/
+    db.ts             ← creates @repo/db instance using env.DATABASE_URL
+    logger.ts         ← creates @repo/logger instance using env.LOG_*
+    <domain>.ts       ← domain services (user-service.ts, etc.)
   middleware/          ← oRPC middleware (auth, logging, error handling)
-  services/           ← business logic (pure functions, no framework deps)
   utils/              ← backend-specific utilities
+```
+
+## Environment (STRICT)
+
+`env.ts` is the single source of truth for all configuration. Rules:
+
+- **`process.env` must ONLY appear in `env.ts`**. Nowhere else. Ever.
+- All env vars are validated with Zod at startup — the app crashes immediately on invalid config.
+- Every other file imports the typed `env` object: `import { env } from '../env.js'`
+- When adding a new env var: add it to the Zod schema in `env.ts`, use `env.NEW_VAR` everywhere.
+
+```typescript
+// env.ts — the ONLY place process.env is read
+import process from 'node:process'
+import { z } from 'zod'
+
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'staging', 'test']).default('development'),
+  PORT: z.coerce.number().default(3000),
+  DATABASE_URL: z.string().min(1),
+  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'trace']).default('info'),
+})
+
+export const env = envSchema.parse(process.env)
+```
+
+```typescript
+// services/db.ts — uses env, NOT process.env
+import { env } from '../env.js'
+export const db = createDb({ connectionString: env.DATABASE_URL })
 ```
 
 ## oRPC
@@ -31,38 +61,14 @@ apps/api/src/
 - Keep procedures thin — delegate logic to services.
 - Use middleware for cross-cutting concerns (auth, logging, rate limiting).
 
-```typescript
-export const userRouter = router({
-  getById: publicProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .output(userSchema)
-    .query(async ({ input, ctx }) => {
-      return userService.getById(ctx.db, input.id)
-    }),
-})
-```
-
 ## Drizzle ORM
 
-- Define schema in `db/schema.ts` using Drizzle's table builders.
-- Use `drizzle-kit` for migrations. Never hand-edit migration files.
+- Schema is defined in `packages/db`, not in the app — see the `shared` rule.
+- The app creates a db instance in `services/db.ts` using `env.DATABASE_URL`.
+- Migrations run automatically at app startup via `migrateDb(db)` — before the server listens.
 - Prefer Drizzle's query builder over raw SQL.
 - Keep queries in service functions, not in procedures directly.
-
-```typescript
-export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  name: varchar('name', { length: 255 }).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
-```
-
-## Zod Schemas
-
-- Shared schemas in `@repo/shared` — reused by frontend and backend.
-- Backend-only schemas (internal validation, DB row shapes) stay in `apps/api/`.
-- Always use `.parse()` or `.safeParse()` at boundaries, never trust raw input.
+- Pass the `db` instance to services as a parameter.
 
 ## Services
 
@@ -70,14 +76,15 @@ export const users = pgTable('users', {
 - One service file per domain (`user-service.ts`, `order-service.ts`).
 - Return typed results, throw typed errors.
 
+## Logging
+
+- Use `@repo/logger` — never `console.log` / `console.error`.
+- Create instance in `services/logger.ts` using `env.LOG_LEVEL` and `env.LOG_FORMAT`.
+- Structured logging: `logger.error('message', { error, requestId })`.
+
 ## Error Handling
 
 - Map errors to proper HTTP status codes in middleware.
 - Domain errors extend a base `AppError` class with `code`, `message`, `cause`.
-- Log errors with structured context (request ID, user ID, operation).
+- Log errors with structured context (request ID, user ID, operation) via the logger.
 - Never expose internals (stack traces, DB errors) in API responses.
-
-## Environment
-
-- Validate env vars at startup with Zod.
-- Access config through a typed `env` object, never raw `process.env`.
