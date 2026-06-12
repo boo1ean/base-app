@@ -1,8 +1,14 @@
-const API_BASE = '/api'
+import type { AppRouter } from '@repo/api/router'
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, init)
-  if (!res.ok)
-    throw new Error(`API ${res.status}: ${res.statusText}`)
-  return res.json() as Promise<T>
-}
+import { createORPCClient } from '@orpc/client'
+import { RPCLink } from '@orpc/client/fetch'
+import { createTanstackQueryUtils } from '@orpc/tanstack-query'
+import type { RouterClient } from '@orpc/server'
+
+const link = new RPCLink({
+  url: '/rpc',
+})
+
+export const client: RouterClient<AppRouter> = createORPCClient(link)
+
+export const orpc = createTanstackQueryUtils(client)

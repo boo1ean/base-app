@@ -57,6 +57,9 @@ export const db = createDb({ connectionString: env.DATABASE_URL })
 ## oRPC
 
 - Group related procedures into sub-routers by domain.
+- **Never define explicit paths or HTTP methods** — no `.route({ method, path })`. The frontend uses a typed RPC client, so oRPC's automatic path resolution handles routing.
+- The server uses `RPCHandler` (not `OpenAPIHandler`) with a `/rpc` prefix.
+- `AppRouter` type is exported from `@repo/api/router` for the frontend typed client.
 - Validate all inputs and outputs with Zod schemas from `@repo/shared`.
 - Keep procedures thin — delegate logic to services.
 - Use middleware for cross-cutting concerns (auth, logging, rate limiting).

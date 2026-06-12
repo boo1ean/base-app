@@ -49,28 +49,28 @@ Create:
 
 ```typescript
 // hooks/use-notifications.ts
-export const notificationKeys = {
-  all: ['notifications'] as const,
-}
+import { useQuery } from '@tanstack/react-query'
+import { orpc } from '@/lib/api-client'
 
 export function useNotifications() {
-  return useQuery({
-    queryKey: notificationKeys.all,
-    queryFn: () => api.notifications.list(),
-  })
+  return useQuery(orpc.notifications.list.queryOptions())
 }
 ```
 
 ## 3. Backend Router
 
-If the feature needs an API, add `apps/api/src/router/<name>.ts` and merge it into the root router. Validate I/O with schemas from `@repo/shared`. Keep procedures thin — delegate to a service in `apps/api/src/services/<name>-service.ts`.
+If the feature needs an API, add `apps/api/src/router/<name>.ts` and merge it into the root router. Validate I/O with schemas from `@repo/shared`. Keep procedures thin — delegate to a service in `apps/api/src/services/<name>-service.ts`. Never define explicit paths or HTTP methods — the frontend uses the typed RPC client.
 
 ```typescript
-export const notificationRouter = router({
-  list: publicProcedure
+import { os } from '@orpc/server'
+import { z } from 'zod'
+import { notificationSchema } from '@repo/shared'
+
+export const notifications = {
+  list: os
     .output(z.array(notificationSchema))
-    .query(({ ctx }) => notificationService.list(ctx.db)),
-})
+    .handler(({ context }) => notificationService.list(context.db)),
+}
 ```
 
 ## 4. Route Wiring

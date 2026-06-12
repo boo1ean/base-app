@@ -1,10 +1,12 @@
 ---
-description: React + Vite + Tailwind + shadcn/ui component patterns
+description: React + Vite + TanStack Query + Tailwind + shadcn/ui component patterns
 globs: "apps/web/**/*.{ts,tsx}, packages/ui/**/*.{ts,tsx}"
 alwaysApply: false
 ---
 
 # Frontend
+
+**Stack:** React, Vite, TanStack Query, oRPC typed client, Tailwind CSS, shadcn/ui
 
 ## Component Structure
 
@@ -86,14 +88,10 @@ src/
 
 ## Data Fetching
 
-- TanStack Query for server state.
-- Query key factories:
-
-```typescript
-export const userKeys = {
-  all: ['users'] as const,
-  detail: (id: string) => [...userKeys.all, id] as const,
-}
-```
-
-- oRPC client calls go through typed hooks wrapping `useQuery` / `useMutation`.
+- TanStack Query for server state via the typed oRPC client.
+- The oRPC client and TanStack Query utils are set up in `lib/api-client.ts`:
+  - `client` — typed `RouterClient<AppRouter>` for direct calls.
+  - `orpc` — TanStack Query utils (`orpc.<procedure>.queryOptions()`, `.mutationOptions()`).
+- **Never use manual `fetch` or hand-written types for API calls.** Always use the typed `orpc` utils.
+- Use `orpc.*.queryOptions()` with `useQuery` / `useSuspenseQuery`.
+- Use `orpc.*.mutationOptions()` with `useMutation`.

@@ -1,17 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiFetch } from '@/lib/api-client'
-
-interface HealthResponse {
-  status: string
-  uptime: number
-  timestamp: string
-}
+import { orpc } from '@/lib/api-client'
 
 export default function HomePage() {
-  const health = useQuery({
-    queryKey: ['health'],
-    queryFn: () => apiFetch<HealthResponse>('/health'),
-  })
+  const health = useQuery(orpc.health.queryOptions())
 
   return (
     <div className="text-center space-y-6">
@@ -23,7 +14,7 @@ export default function HomePage() {
       </p>
 
       <div className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-left font-mono text-sm">
-        <p className="text-zinc-500 mb-2">GET /api/health</p>
+        <p className="text-zinc-500 mb-2">rpc health</p>
         {health.isLoading && (
           <p className="text-zinc-400">connecting...</p>
         )}

@@ -82,11 +82,13 @@ src/
 ## 3. Backend — apps/api
 
 ```bash
-mkdir -p apps/api/src/{router,procedures,middleware,services,utils}
+mkdir -p apps/api/src/{router,middleware,services,utils}
 cd apps/api && pnpm init
 pnpm add @orpc/server @repo/db @repo/shared zod
 pnpm add -D tsx @types/node vitest
 ```
+
+The API uses `RPCHandler` (not `OpenAPIHandler`) with a `/rpc` prefix. Procedures use `os` from `@orpc/server` without explicit routes — no `.route({ method, path })`. Export `AppRouter` type via `"exports": { "./router": "./src/router/index.ts" }` in `package.json` so the frontend can import it for the typed client.
 
 Create `apps/api/src/services/db.ts` — instantiates the shared db package:
 

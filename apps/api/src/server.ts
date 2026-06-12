@@ -1,6 +1,6 @@
 import { createServer } from 'node:http'
 import { migrateDb } from '@repo/db'
-import { OpenAPIHandler } from '@orpc/openapi/node'
+import { RPCHandler } from '@orpc/server/node'
 import { onError } from '@orpc/server'
 import { CORSPlugin } from '@orpc/server/plugins'
 import { env } from './env.js'
@@ -8,7 +8,7 @@ import { router } from './router/index.js'
 import { db } from './services/db.js'
 import { logger } from './services/logger.js'
 
-const handler = new OpenAPIHandler(router, {
+const handler = new RPCHandler(router, {
   plugins: [new CORSPlugin()],
   interceptors: [
     onError((error) => {
@@ -19,6 +19,7 @@ const handler = new OpenAPIHandler(router, {
 
 const server = createServer(async (req, res) => {
   const { matched } = await handler.handle(req, res, {
+    prefix: '/rpc',
     context: { headers: req.headers },
   })
 
