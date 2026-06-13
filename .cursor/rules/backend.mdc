@@ -33,6 +33,15 @@ apps/api/src/
 - Every other file imports the typed `env` object: `import { env } from '../env.js'`
 - When adding a new env var: add it to the Zod schema in `env.ts`, use `env.NEW_VAR` everywhere.
 
+### `.env.development` (committed)
+
+Each app has a committed `.env.development` file with defaults matching the `docker-compose.yml` infra services (localhost ports, default creds). This is loaded via Node's `--env-file` flag in the `dev` script — no dotenv library needed.
+
+- The file is **committed** to the repo (`.gitignore` has `!.env.development` exception).
+- It contains **only non-secret local dev defaults** (docker-compose user/pass for Postgres, localhost URLs).
+- The `dev` script must use `--env-file .env.development`: `tsx watch --env-file .env.development src/server.ts`.
+- When adding a new env var with a Zod `.default()`, no `.env.development` entry needed. When the var is required (no default), add it to `.env.development` with the docker-compose default value.
+
 ```typescript
 // env.ts — the ONLY place process.env is read
 import process from 'node:process'

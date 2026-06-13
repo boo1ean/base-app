@@ -3,5 +3,6 @@ dist
 .turbo
 .env
 .env.*
+!.env.development
 .DS_Store
 *.local

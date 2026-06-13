@@ -17,11 +17,12 @@
   },
   "dependencies": {
     "consola": "^3.4.0",
-    "drizzle-orm": "^0.38.0",
+    "drizzle-orm": "1.0.0-beta.23",
+    "drizzle-seed": "1.0.0-beta.23",
     "postgres": "^3.4.0"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.30.0",
+    "drizzle-kit": "1.0.0-beta.23",
     "@types/node": "^22.10.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
