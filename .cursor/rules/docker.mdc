@@ -6,12 +6,17 @@ alwaysApply: false
 
 # Docker
 
-`docker compose up` must launch the **entire** stack in one shot — every app and every infra dependency included.
+## Profiles
+
+- **Default (no profile)** — infrastructure dependencies only (Postgres, Redis, RabbitMQ, etc.). `docker compose up` starts just the infra so devs can run apps locally with hot-reload.
+- **`apps` profile** — application services (`web`, `api`, …). `docker compose --profile apps up` starts the full stack including built app containers.
+
+Every app service must have `profiles: [apps]`. Infra services must **not** have a profile (they always start).
 
 ## Structure
 
-- One service per app (`web`, `api`), each with a build `context` + `dockerfile`.
-- One service per infra dependency (database, cache, queue, object storage, etc.).
+- One service per app (`web`, `api`), each with a build `context` + `dockerfile` and `profiles: [apps]`.
+- One service per infra dependency (database, cache, queue, object storage, etc.) — no profile.
 - Wire startup order with `depends_on` + `healthcheck`.
 - Expose config via env vars with sane defaults (`${VAR:-default}`) so the stack launches with no `.env` file. Document overridable vars in the env template at `.cursor/skills/scaffold-app/templates/env.example`.
 
@@ -19,10 +24,13 @@ alwaysApply: false
 
 This is mandatory, not optional. In the **same change** where you:
 
-- **Add a new app** → add a service + a `Dockerfile` for it, and wire `depends_on`.
-- **Add an infra dependency** (Postgres, Redis, MinIO/S3, RabbitMQ/Kafka, mailpit, etc.) → add a service with image, ports, volumes, and a `healthcheck`.
+- **Add a new app** → add a service + a `Dockerfile` for it, wire `depends_on`, and assign `profiles: [apps]`.
+- **Add an infra dependency** (Postgres, Redis, MinIO/S3, RabbitMQ/Kafka, mailpit, etc.) → add a service with image, ports, volumes, and a `healthcheck`. No profile.
 - **Add or change required env vars** → keep a working default in compose (`${VAR:-default}`) and update the env template at `.cursor/skills/scaffold-app/templates/env.example`.
 
 An infra dependency is anything the app needs running to work. Adding the client library (e.g. `redis`, `ioredis`, `@aws-sdk/client-s3`) to a `package.json` is the signal that a matching service is likely needed in `docker-compose.yml`.
 
-The repo must always be launchable with a single `docker compose up`. A change that breaks that is incomplete.
+The repo must always be launchable:
+
+- `docker compose up` — infra only (default for local dev).
+- `docker compose --profile apps up` — full stack including apps.

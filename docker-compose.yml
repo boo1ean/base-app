@@ -20,6 +20,7 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+    profiles: [apps]
     restart: unless-stopped
     environment:
       NODE_ENV: ${NODE_ENV:-development}
@@ -35,6 +36,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+    profiles: [apps]
     restart: unless-stopped
     environment:
       VITE_API_URL: http://api:3000
