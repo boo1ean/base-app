@@ -91,3 +91,16 @@ export const db = createDb({ connectionString: env.DATABASE_URL })
 - Domain errors extend a base `AppError` class with `code`, `message`, `cause`.
 - Log errors with structured context (request ID, user ID, operation) via the logger.
 - Never expose internals (stack traces, DB errors) in API responses.
+
+## Infrastructure Checks on Startup
+
+The app **must** verify all external infrastructure is reachable **before** accepting traffic. If any check fails, the process exits immediately (non-zero) — never start serving with a broken dependency.
+
+- Run connection checks **before** migrations and before `server.listen()`.
+- Each infra provider (`@repo/db`, future Redis/RabbitMQ packages) exposes a `check*Connection()` function that throws on failure.
+- The startup sequence in `server.ts` is:
+  1. Check infrastructure (Postgres, Redis, RabbitMQ, etc.)
+  2. Run migrations
+  3. Start listening
+- When adding a new infra dependency (DB, cache, queue), add a corresponding `check*Connection()` to its package and call it in the startup sequence.
+- The `/rpc/health` endpoint also reports the liveness of each provider (`checks: { postgres: 'up' | 'down', ... }`) for runtime monitoring.

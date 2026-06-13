@@ -1,5 +1,6 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate as drizzleMigrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
@@ -23,6 +24,10 @@ const migrationsFolder = path.resolve(
 
 export async function migrateDb(db: Database) {
   await drizzleMigrate(db, { migrationsFolder })
+}
+
+export async function checkDbConnection(db: Database): Promise<void> {
+  await db.execute(sql`SELECT 1`)
 }
 
 export { schema }

@@ -1,5 +1,5 @@
 import { createServer } from 'node:http'
-import { migrateDb } from '@repo/db'
+import { checkDbConnection, migrateDb } from '@repo/db'
 import { RPCHandler } from '@orpc/server/node'
 import { onError } from '@orpc/server'
 import { CORSPlugin } from '@orpc/server/plugins'
@@ -31,6 +31,10 @@ const server = createServer(async (req, res) => {
 })
 
 async function start() {
+  logger.info('Checking infrastructure connections...')
+  await checkDbConnection(db)
+  logger.info('Postgres connection verified')
+
   logger.info('Running database migrations...')
   await migrateDb(db)
   logger.info('Migrations complete')
