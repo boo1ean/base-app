@@ -44,9 +44,11 @@ Order within a file: imports → types → component → local helpers.
 
 ## shadcn/ui
 
-- Use shadcn components as the primitive layer. Don't reinvent inputs, dialogs, buttons.
-- Customize via Tailwind — not by forking component internals.
-- Wrap shadcn primitives in domain components when adding business logic.
+- **Always reuse existing shadcn components** — never create custom elements when a shadcn primitive already covers the use case (buttons, inputs, dialogs, selects, cards, badges, tooltips, etc.).
+- Use the `Button` component with its built-in `variant` (`default`, `destructive`, `outline`, `secondary`, `ghost`, `link`) and `size` (`default`, `sm`, `lg`, `icon`) props. Never write raw `<button>` elements with hand-styled classes.
+- Same principle applies to all primitives: use `Input` instead of `<input>`, `Dialog` instead of a custom modal, `Select` instead of a custom dropdown, etc.
+- Customize appearance via Tailwind `className` — not by forking component internals.
+- Wrap shadcn primitives in domain components only when adding business logic or composition (e.g. `ConfirmDialog` wrapping `AlertDialog`).
 
 ## Styling (Tailwind)
 
