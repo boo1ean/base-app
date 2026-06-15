@@ -42,7 +42,7 @@ Passive coding standards in `.cursor/rules/*.mdc`, auto-injected by glob:
 | `testing`          | `*.test.*`, `*.spec.*`, `tests/**`    |
 | `eslint`           | `eslint.config.*`                     |
 | `docker`           | `docker-compose*.yml`, `**/Dockerfile`, `**/package.json` |
-| `rule-maintenance` | `.cursor/rules/**`, `.cursor/skills/**`, `AGENTS.md` |
+| `rule-maintenance` | `.cursor/rules/**`, `.cursor/skills/**`, `AGENTS.md`, `README.md` |
 
 ## Skills
 

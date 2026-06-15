@@ -1,6 +1,6 @@
 ---
 description: Keep AI docs in sync when rules or skills change
-globs: ".cursor/rules/*.mdc, .cursor/skills/**/SKILL.md, AGENTS.md"
+globs: ".cursor/rules/*.mdc, .cursor/skills/**/SKILL.md, AGENTS.md, README.md"
 alwaysApply: false
 ---
 
@@ -9,7 +9,8 @@ alwaysApply: false
 When you add, remove, rename, or change the scope of any rule (`.cursor/rules/*.mdc`) or skill (`.cursor/skills/**/SKILL.md`), update the documentation in the same change:
 
 1. **Update `AGENTS.md`** — its Rules and Skills tables must match the actual files (name, trigger/glob, purpose).
-2. **Check cross-references** — if a rule or skill links to another (e.g. `eslint`, `testing`), fix or remove stale links.
-3. **Keep frontmatter accurate** — `description` and `globs` must reflect what the file actually covers.
+2. **Update `README.md`** — its stack, layout, core approaches, and rule/skill tables must stay accurate when the toolset, structure, or rule set changes.
+3. **Check cross-references** — if a rule or skill links to another (e.g. `eslint`, `testing`), fix or remove stale links.
+4. **Keep frontmatter accurate** — `description` and `globs` must reflect what the file actually covers.
 
-A change to the rule set is not complete until `AGENTS.md` reflects it.
+A change to the rule set is not complete until `AGENTS.md` and `README.md` reflect it.
