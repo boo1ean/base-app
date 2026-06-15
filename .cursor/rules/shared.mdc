@@ -26,8 +26,23 @@ packages/db/src/
 - No `process.env` — the connection string comes from the app's `env.ts`.
 - Schema files define tables only. No queries, no business logic.
 - Add new tables as `packages/db/src/schema/<domain>.ts`, re-export from `schema/index.ts`.
-- Generate migrations with `pnpm --filter @repo/db db:generate`. Never hand-edit migration files.
 - `drizzle.config.ts` has localhost defaults hardcoded for local dev (no env vars needed).
+
+### Migrations
+
+Always use the root-level `db:*` scripts from the project root. Never invent custom drizzle-kit commands or run them from inside `packages/db` directly.
+
+| Command | Purpose |
+|------------------|----------------------------------------------|
+| `pnpm db:generate` | Generate migration files from schema changes |
+| `pnpm db:migrate` | Apply pending migrations to the database |
+| `pnpm db:drop` | Drop a migration (uses `scripts/drop.ts`) |
+| `pnpm db:fresh` | Reset DB and re-apply all migrations |
+| `pnpm db:studio` | Open Drizzle Studio for visual inspection |
+
+- Never hand-edit generated migration SQL files.
+- After changing any schema file, run `pnpm db:generate` then `pnpm db:migrate`.
+- All commands must be run from the **monorepo root**, not from `packages/db/`.
 
 ### Usage in apps
 
