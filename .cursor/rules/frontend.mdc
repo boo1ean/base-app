@@ -44,9 +44,11 @@ Order within a file: imports → types → component → local helpers.
 
 ## shadcn/ui
 
+- **All shadcn primitives live in `packages/ui` and are imported as `@repo/ui/<name>`** (e.g. `import { Button } from '@repo/ui/button'`). Never copy primitives into `apps/web/src/components/ui/` — that path is lint-banned (`no-restricted-imports`).
 - **Always reuse existing shadcn components** — never create custom elements when a shadcn primitive already covers the use case (buttons, inputs, dialogs, selects, cards, badges, tooltips, etc.).
-- Use the `Button` component with its built-in `variant` (`default`, `destructive`, `outline`, `secondary`, `ghost`, `link`) and `size` (`default`, `sm`, `lg`, `icon`) props. Never write raw `<button>` elements with hand-styled classes.
+- Use the `Button` component with its built-in `variant` (`default`, `destructive`, `outline`, `secondary`, `ghost`, `link`) and `size` (`default`, `sm`, `lg`, `icon`) props. Never write raw `<button>` elements with hand-styled classes — raw `<button>`/`<input>` in `apps/web` is a lint error (`no-restricted-syntax`).
 - Same principle applies to all primitives: use `Input` instead of `<input>`, `Dialog` instead of a custom modal, `Select` instead of a custom dropdown, etc.
+- Add new primitives with the shadcn CLI into `packages/ui` (config in `packages/ui/components.json`), or follow the `add-ui-component` skill. Theme tokens are defined once in `apps/web/src/app.css`.
 - Customize appearance via Tailwind `className` — not by forking component internals.
 - Wrap shadcn primitives in domain components only when adding business logic or composition (e.g. `ConfirmDialog` wrapping `AlertDialog`).
 

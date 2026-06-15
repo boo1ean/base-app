@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { TabbedActions } from '@/components/tabbed-actions'
 import { orpc } from '@/lib/api-client'
 
 export default function HomePage() {
@@ -12,6 +13,10 @@ export default function HomePage() {
       <p className="text-zinc-400 text-lg">
         Base app is running.
       </p>
+
+      <div className="mx-auto mt-8 flex justify-center">
+        <TabbedActions />
+      </div>
 
       <div className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-left font-mono text-sm">
         <p className="text-zinc-500 mb-2">rpc health</p>
