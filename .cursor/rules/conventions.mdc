@@ -29,7 +29,9 @@ Use path aliases (`@/`). Never deep relative imports like `../../../`.
 
 - `strict: true` always. No exceptions.
 - Never use `any`. Use `unknown` + type guards.
-- Annotate return types on exported functions.
+- Prefer inference — omit return types and variable type annotations when TypeScript can infer them correctly.
+- Define named types only when they add value: reused shapes, component props, public package exports, or non-obvious unions. Do not duplicate what inference already expresses.
+- Annotate explicitly only when inference fails or would widen incorrectly — e.g. recursive functions, empty literals (`[]`), or a public API contract that must not drift.
 - Use `satisfies` to validate literals without widening.
 - Use parameter objects when a function takes 3+ arguments.
 - Derive types from Zod schemas (`z.infer<typeof schema>`), not the other way around.

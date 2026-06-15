@@ -95,3 +95,24 @@ src/
 - **Never use manual `fetch` or hand-written types for API calls.** Always use the typed `orpc` utils.
 - Use `orpc.*.queryOptions()` with `useQuery` / `useSuspenseQuery`.
 - Use `orpc.*.mutationOptions()` with `useMutation`.
+
+## Web Storage
+
+- **Never touch `localStorage` / `sessionStorage` directly.** No raw `getItem` / `setItem` / `JSON.parse`.
+- Use `createWebStorage` from [`seitu/web`](https://seitu.letstri.dev/docs/web/web-storage) — every key is validated by a Zod schema and has a default value.
+- Define one typed storage handle per concern, with schemas + `defaultValues`.
+- In React, subscribe with `useSubscription` from `seitu/react` instead of reading on render.
+
+```ts
+import { createWebStorage } from 'seitu/web'
+import * as z from 'zod'
+
+const appStorage = createWebStorage({
+  type: 'localStorage',
+  schemas: { theme: z.enum(['light', 'dark']) },
+  defaultValues: { theme: 'light' },
+})
+
+appStorage.get() // typed, validated
+appStorage.set({ theme: 'dark' })
+```
