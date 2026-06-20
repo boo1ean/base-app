@@ -25,7 +25,7 @@ export default antfu({
         'error',
         {
           selector: 'JSXOpeningElement[name.name=\'button\']',
-          message: 'Use the shadcn <Button> from @repo/ui/button instead of a raw <button>.',
+          message: 'Use the shadcn <Button> from @repo/ui/components/button instead of a raw <button>.',
         },
         {
           selector: 'JSXOpeningElement[name.name=\'input\']',

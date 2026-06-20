@@ -12,7 +12,7 @@ alwaysApply: false
 
 ```tsx
 import { useState } from 'react'
-import { Button } from '@repo/ui/button'
+import { Button } from '@repo/ui/components/button'
 
 interface UserCardProps {
   user: User
@@ -44,11 +44,13 @@ Order within a file: imports → types → component → local helpers.
 
 ## shadcn/ui
 
-- **All shadcn primitives live in `packages/ui` and are imported as `@repo/ui/<name>`** (e.g. `import { Button } from '@repo/ui/button'`). Never copy primitives into `apps/web/src/components/ui/` — that path is lint-banned (`no-restricted-imports`).
+- **All shadcn primitives live in `packages/ui` and are imported as `@repo/ui/components/<name>`** (e.g. `import { Button } from '@repo/ui/components/button'`); the `cn` helper is `@repo/ui/lib/utils`. Never copy primitives into `apps/web/src/components/ui/` — that path is lint-banned (`no-restricted-imports`).
 - **Always reuse existing shadcn components** — never create custom elements when a shadcn primitive already covers the use case (buttons, inputs, dialogs, selects, cards, badges, tooltips, etc.).
 - Use the `Button` component with its built-in `variant` (`default`, `destructive`, `outline`, `secondary`, `ghost`, `link`) and `size` (`default`, `sm`, `lg`, `icon`) props. Never write raw `<button>` elements with hand-styled classes — raw `<button>`/`<input>` in `apps/web` is a lint error (`no-restricted-syntax`).
 - Same principle applies to all primitives: use `Input` instead of `<input>`, `Dialog` instead of a custom modal, `Select` instead of a custom dropdown, etc.
-- Add new primitives with the shadcn CLI into `packages/ui` (config in `packages/ui/components.json`), or follow the `add-ui-component` skill. Theme tokens are defined once in `apps/web/src/app.css`.
+- Add new primitives **only** with the root command: `pnpm ui:add <name>` (wraps `shadcn add --cwd packages/ui`, configured by `packages/ui/components.json`). It always writes the primitive into `packages/ui`. Or follow the `add-ui-component` skill.
+- **Never invoke the shadcn CLI directly** (`npx`/`pnpm dlx shadcn …`, `shadcn add` from an app, etc.). There is intentionally no `components.json` in any app, so a direct/app-run CLI invocation will fail by design. The CLI version is pinned in the root `ui:add` script — do not use `shadcn@latest`. To bump it, change the version in the root `package.json` script (and note why).
+- Theme tokens (CSS variables + `@theme`) live once in `packages/ui/src/styles/globals.css` and are imported by `apps/web/src/app.css` via `@import '@repo/ui/globals.css'`.
 - Customize appearance via Tailwind `className` — not by forking component internals.
 - Wrap shadcn primitives in domain components only when adding business logic or composition (e.g. `ConfirmDialog` wrapping `AlertDialog`).
 

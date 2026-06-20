@@ -1,3 +1,0 @@
-export * from './components/button'
-export * from './components/tabs'
-export * from './lib/utils'

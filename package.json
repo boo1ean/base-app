@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "turbo run typecheck",
+    "ui:add": "pnpm dlx shadcn@4.11.0 add --cwd packages/ui",
     "db:generate": "pnpm --filter @repo/db db:generate",
     "db:migrate": "pnpm --filter @repo/db db:migrate",
     "db:drop": "pnpm --filter @repo/db db:drop",

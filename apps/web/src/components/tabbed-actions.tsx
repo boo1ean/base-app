@@ -1,5 +1,5 @@
-import { Button } from '@repo/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/tabs'
+import { Button } from '@repo/ui/components/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/tabs'
 
 const tabs = [
   { value: 'tab-1', label: 'Tab 1' },

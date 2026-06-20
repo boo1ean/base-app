@@ -11,27 +11,38 @@ Create a reusable component in `packages/ui`. Replace `<name>` with the componen
 
 - Built on shadcn/ui primitives — don't reinvent inputs, dialogs, buttons.
 - Accept `className`, merge with `cn()`.
-- Forward refs when wrapping native elements.
 - Styling only — no app-specific business logic.
-- Export from the package barrel; consumers import as `@repo/ui/<name>`.
+- Internal imports use Node subpath imports (`#lib/utils`, `#components/*`), not the package name.
+- Consumers import each primitive by subpath: `@repo/ui/components/<name>` (and `@repo/ui/lib/utils`). There is no barrel.
 
-## Steps
+## Prefer the CLI
+
+Run the root command — it writes the primitive into `packages/ui` (via `--cwd packages/ui`):
+
+```bash
+pnpm ui:add <name>
+```
+
+- This is the **only** sanctioned way to invoke shadcn. The CLI version is pinned in the root `package.json` `ui:add` script; never call `pnpm dlx shadcn@latest` / `npx shadcn` directly.
+- Do not run the shadcn CLI from an app — there is no app-level `components.json`, so it will fail by design. Only `packages/ui` is configured.
+- To upgrade the CLI, bump the pinned version in the root `ui:add` script.
+
+## Manual steps
 
 1. Create `packages/ui/src/components/<name>.tsx`:
 
 ```tsx
 import type { ComponentProps } from 'react'
-import { forwardRef } from 'react'
-import { cn } from '@repo/ui/lib/utils'
+import { cn } from '#lib/utils'
 
 interface BadgeProps extends ComponentProps<'span'> {
   variant?: 'default' | 'destructive'
 }
 
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant = 'default', ...props }, ref) => (
+export function Badge({ className, variant = 'default', ...props }: BadgeProps) {
+  return (
     <span
-      ref={ref}
+      data-slot="badge"
       className={cn(
         'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium',
         variant === 'default' && 'bg-primary text-primary-foreground',
@@ -40,11 +51,10 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       )}
       {...props}
     />
-  ),
-)
-Badge.displayName = 'Badge'
+  )
+}
 ```
 
-2. Export from `packages/ui/src/index.ts` (the barrel).
+2. It's auto-exported via the `"./components/*"` subpath export — consume as `@repo/ui/components/badge`.
 
 3. Add a test: `packages/ui/src/components/<name>.test.tsx`.

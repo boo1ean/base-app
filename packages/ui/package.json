@@ -3,11 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#components/*": "./src/components/*.tsx",
+    "#hooks/*": "./src/hooks/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./button": "./src/components/button.tsx",
-    "./tabs": "./src/components/tabs.tsx",
-    "./lib/utils": "./src/lib/utils.ts"
+    "./globals.css": "./src/styles/globals.css",
+    "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./lib/*": "./src/lib/*.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -17,6 +22,7 @@
     "@radix-ui/react-tabs": "1.1.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "radix-ui": "^1.5.0",
     "tailwind-merge": "3.0.2"
   },
   "peerDependencies": {
