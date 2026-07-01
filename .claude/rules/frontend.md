@@ -1,7 +1,8 @@
 ---
 description: React + Vite + TanStack Query + Tailwind + shadcn/ui component patterns
-globs: "apps/web/**/*.{ts,tsx}, packages/ui/**/*.{ts,tsx}"
-alwaysApply: false
+paths:
+  - "apps/web/**/*.{ts,tsx}"
+  - "packages/ui/**/*.{ts,tsx}"
 ---
 
 # Frontend

@@ -1,7 +1,8 @@
 ---
 description: ESLint with @antfu/eslint-config — setup and rules
-globs: "eslint.config.*, **/eslint.config.*"
-alwaysApply: false
+paths:
+  - "eslint.config.*"
+  - "**/eslint.config.*"
 ---
 
 # ESLint

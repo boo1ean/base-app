@@ -56,20 +56,21 @@ No `console.log`, debug artifacts, or secrets in staged files. Use the logger, n
 
 ## AI Rules & Skills
 
-Coding standards and workflows for AI agents live alongside the code and are auto-applied by file glob. See `AGENTS.md` for the authoritative tables.
+Coding standards and workflows for Claude Code live alongside the code and load automatically by file path: `CLAUDE.md` (imports `AGENTS.md`) is the entry point, rules live in `.claude/rules/*.md`, skills in `.claude/skills/`. See `AGENTS.md` for the authoritative tables.
 
-| Rule (`.cursor/rules/*.mdc`) | Applies to |
-|------------------------------|-----------------------------------------|
+| Rule | Applies to |
+|------|-----------------------------------------|
 | `conventions` | Always — naming, imports, TS, errors, files |
 | `git` | Always — branches, commits, PRs |
+| `platform` | Always — detect current OS, use only its shell conventions |
 | `frontend` | `apps/web/**`, `packages/ui/**` |
 | `backend` | `apps/api/**` |
 | `shared` | `packages/{shared,db,logger}/**` |
 | `testing` | `*.test.*`, `*.spec.*`, `tests/**` |
 | `eslint` | `eslint.config.*` |
 | `docker` | `docker-compose*.yml`, `**/Dockerfile`, `**/package.json` |
-| `rule-maintenance` | `.cursor/rules/**`, `.cursor/skills/**`, `AGENTS.md` |
+| `rule-maintenance` | `.claude/rules/**`, `.claude/skills/**`, `AGENTS.md`, `CLAUDE.md` |
 
-On-demand skills in `.cursor/skills/`: `scaffold-app` (bootstrap the monorepo), `add-feature` (new domain slice), `add-ui-component` (shared UI primitive).
+On-demand skills in `.claude/skills/`: `scaffold-app` (bootstrap the monorepo), `add-feature` (new domain slice), `add-ui-component` (shared UI primitive).
 
 > Keep this README in sync: when the stack, layout, core approaches, or the rule/skill set change, update this file and `AGENTS.md` in the same change.

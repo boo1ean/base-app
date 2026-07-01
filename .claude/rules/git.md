@@ -1,6 +1,5 @@
 ---
 description: Git workflow — branch naming, commits, PRs
-alwaysApply: true
 ---
 
 # Git Workflow

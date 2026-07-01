@@ -81,8 +81,9 @@ src/
 
 ## 3. Backend — apps/api
 
+Create `apps/api/src/router/`, `apps/api/src/middleware/`, `apps/api/src/services/`, `apps/api/src/utils/` (see the `platform` rule for the OS-specific directory command), then:
+
 ```bash
-mkdir -p apps/api/src/{router,middleware,services,utils}
 cd apps/api && pnpm init
 pnpm add @orpc/server @repo/db @repo/shared zod
 pnpm add -D tsx @types/node vitest
@@ -99,8 +100,9 @@ export const db = createDb({ connectionString: process.env.DATABASE_URL! })
 
 ## 4. DB Package — packages/db
 
+Create `packages/db/src/schema/` (see the `platform` rule), then:
+
 ```bash
-mkdir -p packages/db/src/schema
 cd packages/db && pnpm init
 pnpm add drizzle-orm postgres
 pnpm add -D drizzle-kit @types/node
@@ -110,16 +112,18 @@ Schema lives here. Apps import `createDb` and pass a connection string. See the 
 
 ## 5. Shared — packages/shared
 
+Create `packages/shared/src/schemas/` (see the `platform` rule), then:
+
 ```bash
-mkdir -p packages/shared/src/schemas
 cd packages/shared && pnpm init
 pnpm add zod
 ```
 
 ## 6. UI — packages/ui
 
+Create `packages/ui/src/components/`, `packages/ui/src/lib/` (see the `platform` rule), then:
+
 ```bash
-mkdir -p packages/ui/src/{components,lib}
 cd packages/ui && pnpm init
 pnpm add react tailwindcss clsx tailwind-merge
 ```
@@ -153,11 +157,7 @@ Launch the whole stack:
 docker compose up
 ```
 
-To override defaults locally, copy the env template to the repo root:
-
-```bash
-cp .cursor/skills/scaffold-app/templates/env.example .env
-```
+To override defaults locally, copy the env template (`.claude/skills/scaffold-app/templates/env.example` → repo-root `.env`; see the `platform` rule for the OS-specific copy command).
 
 Keep `docker-compose.yml` in sync with every app and infra dependency — see the `docker` rule.
 
@@ -167,4 +167,4 @@ Keep `docker-compose.yml` in sync with every app and infra dependency — see th
 git init
 ```
 
-`.gitignore`: `node_modules`, `dist`, `.env*`, `.DS_Store`, `*.local`, `.turbo`
+`.gitignore`: `node_modules`, `dist`, `.env*`, `*.local`, `.turbo`, plus OS cruft (`.DS_Store`, `Thumbs.db`, `Desktop.ini`) — see the `platform` rule.

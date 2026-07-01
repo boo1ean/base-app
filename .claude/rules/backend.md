@@ -1,7 +1,7 @@
 ---
 description: Backend patterns — tsx, oRPC, Drizzle ORM, Zod
-globs: "apps/api/**/*.ts"
-alwaysApply: false
+paths:
+  - "apps/api/**/*.ts"
 ---
 
 # Backend

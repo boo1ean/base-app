@@ -1,7 +1,9 @@
 ---
 description: Shared packages — DB schema, logger, Zod schemas, types, utilities
-globs: "packages/shared/**/*.ts, packages/db/**/*.ts, packages/logger/**/*.ts"
-alwaysApply: false
+paths:
+  - "packages/shared/**/*.ts"
+  - "packages/db/**/*.ts"
+  - "packages/logger/**/*.ts"
 ---
 
 # Shared Packages

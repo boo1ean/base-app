@@ -1,7 +1,9 @@
 ---
 description: Testing conventions — Vitest, React Testing Library, structure
-globs: "**/*.test.{ts,tsx}, **/*.spec.{ts,tsx}, tests/**"
-alwaysApply: false
+paths:
+  - "**/*.test.{ts,tsx}"
+  - "**/*.spec.{ts,tsx}"
+  - "tests/**"
 ---
 
 # Testing

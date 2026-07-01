@@ -1,7 +1,10 @@
 ---
 description: Docker Compose is the one-shot launch entry point — keep it complete and in sync
-globs: "docker-compose*.yml, compose*.yml, **/Dockerfile, **/package.json"
-alwaysApply: false
+paths:
+  - "docker-compose*.yml"
+  - "compose*.yml"
+  - "**/Dockerfile"
+  - "**/package.json"
 ---
 
 # Docker
@@ -18,7 +21,7 @@ Every app service must have `profiles: [apps]`. Infra services must **not** have
 - One service per app (`web`, `api`), each with a build `context` + `dockerfile` and `profiles: [apps]`.
 - One service per infra dependency (database, cache, queue, object storage, etc.) — no profile.
 - Wire startup order with `depends_on` + `healthcheck`.
-- Expose config via env vars with sane defaults (`${VAR:-default}`) so the stack launches with no `.env` file. Document overridable vars in the env template at `.cursor/skills/scaffold-app/templates/env.example`.
+- Expose config via env vars with sane defaults (`${VAR:-default}`) so the stack launches with no `.env` file. Document overridable vars in the env template at `.claude/skills/scaffold-app/templates/env.example`.
 
 ## Keep it in sync
 
@@ -26,7 +29,7 @@ This is mandatory, not optional. In the **same change** where you:
 
 - **Add a new app** → add a service + a `Dockerfile` for it, wire `depends_on`, and assign `profiles: [apps]`.
 - **Add an infra dependency** (Postgres, Redis, MinIO/S3, RabbitMQ/Kafka, mailpit, etc.) → add a service with image, ports, volumes, and a `healthcheck`. No profile.
-- **Add or change required env vars** → keep a working default in compose (`${VAR:-default}`) and update the env template at `.cursor/skills/scaffold-app/templates/env.example`.
+- **Add or change required env vars** → keep a working default in compose (`${VAR:-default}`) and update the env template at `.claude/skills/scaffold-app/templates/env.example`.
 
 An infra dependency is anything the app needs running to work. Adding the client library (e.g. `redis`, `ioredis`, `@aws-sdk/client-s3`) to a `package.json` is the signal that a matching service is likely needed in `docker-compose.yml`.
 

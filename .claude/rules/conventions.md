@@ -1,6 +1,5 @@
 ---
 description: Universal coding standards — naming, imports, TypeScript, error handling, code style
-alwaysApply: true
 ---
 
 # Conventions
