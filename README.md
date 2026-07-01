@@ -62,6 +62,7 @@ Coding standards and workflows for AI agents live alongside the code and are aut
 |------------------------------|-----------------------------------------|
 | `conventions` | Always — naming, imports, TS, errors, files |
 | `git` | Always — branches, commits, PRs |
+| `platform` | Always — detect current OS, use only its shell conventions |
 | `frontend` | `apps/web/**`, `packages/ui/**` |
 | `backend` | `apps/api/**` |
 | `shared` | `packages/{shared,db,logger}/**` |

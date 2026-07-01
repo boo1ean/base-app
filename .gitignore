@@ -4,5 +4,11 @@ dist
 .env
 .env.*
 !.env.development
+# OS files
 .DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Local, machine-specific overrides
 *.local

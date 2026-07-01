@@ -36,6 +36,7 @@ Passive coding standards in `.cursor/rules/*.mdc`, auto-injected by glob:
 |--------------------|---------------------------------------|
 | `conventions`      | Always                                |
 | `git`              | Always                                |
+| `platform`         | Always — detect current OS, use only its shell conventions |
 | `frontend`         | `apps/web/**`, `packages/ui/**`       |
 | `backend`          | `apps/api/**`                         |
 | `shared`           | `packages/shared/**`, `packages/db/**`, `packages/logger/**` |

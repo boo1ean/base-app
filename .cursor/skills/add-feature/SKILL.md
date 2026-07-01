@@ -36,9 +36,7 @@ export type Notification = z.infer<typeof notificationSchema>
 
 ## 2. Frontend Feature Folder
 
-```bash
-mkdir -p apps/web/src/features/<name>/{components,hooks,utils}
-```
+Create `apps/web/src/features/<name>/components/`, `.../hooks/`, `.../utils/` (see the `platform` rule for the OS-specific directory command).
 
 Create:
 
